@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1041245264815",
+    "project_id": "todolistapp-930a9",
+    "storage_bucket": "todolistapp-930a9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1041245264815:android:c6e574519583fd184cad5a",
+        "android_client_info": {
+          "package_name": "com.example.flutter_todolist_googlemaps"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAel6SGJmQAx1UuyvLgn631kMg-PGs3zzo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

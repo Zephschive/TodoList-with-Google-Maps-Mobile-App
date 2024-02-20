@@ -1,8 +1,11 @@
 
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_todolist_googlemaps/db/db_helper.dart';
+import 'package:flutter_todolist_googlemaps/screens/calendar_page.dart';
 import 'package:flutter_todolist_googlemaps/theme/colors/light_colors.dart';
 import 'package:flutter_todolist_googlemaps/widgets/top_container.dart';
 import 'package:flutter_todolist_googlemaps/widgets/back_button.dart';
@@ -18,11 +21,27 @@ class CreateNewTaskPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    List<String> task =['washing','drying','pasting'];
+    Map<String, dynamic> maps = ({
+      'Marker1':'Marker2',
+      'Marker3':'Marker4'
+
+    });
     double width = MediaQuery.of(context).size.width;
     var downwardIcon = Icon(
       Icons.keyboard_arrow_down,
       color: Colors.black54,
     );
+   void addtask () async{
+    Timer(Duration(seconds: 10), () {  Center(child: CircularProgressIndicator(),);});
+ await db.DB.collection('task').add({
+    'task': maps['Marker1'],
+    'desc': DescController.text,
+    'date': DateController.text,});
+
+   Navigator.push(context, MaterialPageRoute(builder: (context) { return CalendarPage();}));
+   }
   
     
     return Scaffold(
@@ -156,7 +175,7 @@ class CreateNewTaskPage extends StatelessWidget {
               ),
             )),
             GestureDetector(
-              
+              onTap: addtask,
               child: Container(
                 height: 80,
                 width: width,

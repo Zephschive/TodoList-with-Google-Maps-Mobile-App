@@ -67,6 +67,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1041245264815',
     projectId: 'todolistapp-930a9',
     storageBucket: 'todolistapp-930a9.appspot.com',
+    androidClientId: '1041245264815-1jpih1nfddvje6eqeqvdhi0s0vr34t4i.apps.googleusercontent.com',
+    iosClientId: '1041245264815-511d64dndc1qqde81ovelqam495qg9sk.apps.googleusercontent.com',
     iosBundleId: 'com.example.flutterTodolistGooglemaps',
   );
 
@@ -76,6 +78,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1041245264815',
     projectId: 'todolistapp-930a9',
     storageBucket: 'todolistapp-930a9.appspot.com',
+    androidClientId: '1041245264815-1jpih1nfddvje6eqeqvdhi0s0vr34t4i.apps.googleusercontent.com',
+    iosClientId: '1041245264815-000tk5hhc5j6k75irtbnp8ko28e93mbu.apps.googleusercontent.com',
     iosBundleId: 'com.example.flutterTodolistGooglemaps.RunnerTests',
   );
 }

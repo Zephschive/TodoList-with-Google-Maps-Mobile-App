@@ -3,10 +3,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_todolist_googlemaps/auth/pages/login_page.dart';
 import 'package:flutter_todolist_googlemaps/firebase_options.dart';
+import 'package:flutter_todolist_googlemaps/google_map.dart';
+import 'package:flutter_todolist_googlemaps/screens/calendar_page.dart';
 import 'package:flutter_todolist_googlemaps/screens/home_page.dart';
 import 'package:flutter_todolist_googlemaps/theme/colors/light_colors.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 void main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.android);
   
@@ -34,7 +38,7 @@ class MyApp extends StatelessWidget {
           fontFamily: 'Poppins'
         )
       ),
-      home: LoginPage()    
+      home: MapSample()  
       );
   }
 }

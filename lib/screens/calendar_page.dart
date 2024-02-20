@@ -169,7 +169,7 @@ class CalendarPage extends StatelessWidget {
                                 children: snapshot.data!.docs.map((DocumentSnapshot document){
                                   Map<String, dynamic> data =document.data()! as Map<String, dynamic>;
                                   print(data.toString());
-                                  return TaskContainer(title: data['task'].toString(), subtitle: data['desc'].toString(), boxColor: LightColors.kPalePink);
+                                  return TaskContainer(title: data['task'].toString().splitMapJoin(", "), subtitle: data['desc'].toString(), boxColor: LightColors.kPalePink);
                                   
                                 }).toList(),
                                 );

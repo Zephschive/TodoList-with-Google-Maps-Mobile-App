@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_todolist_googlemaps/auth/pages/login_page.dart';
 import 'package:flutter_todolist_googlemaps/screens/calendar_page.dart';
 import 'package:flutter_todolist_googlemaps/theme/colors/light_colors.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -29,10 +31,13 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
-
+  final current = FirebaseAuth.instance.currentUser;
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+    void signout() async{
+      await FirebaseAuth.instance.signOut().then((value) => Navigator.push(context, MaterialPageRoute(builder: (context) { return LoginPage();})));
+    } 
     return Scaffold(
       backgroundColor: LightColors.kLightYellow,
       body: SafeArea(
@@ -81,7 +86,8 @@ class HomePage extends StatelessWidget {
                             children: <Widget>[
                               Container(
                                 child: Text(
-                                  'Sourav Suman',
+                                  current!.email.toString()
+                                  ,
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
                                     fontSize: 22.0,
@@ -172,11 +178,14 @@ class HomePage extends StatelessWidget {
                           SizedBox(height: 5.0),
                           Row(
                             children: <Widget>[
-                              ActiveProjectsCard(
-                                cardColor: LightColors.kGreen,
-                                loadingPercent: 0.25,
-                                title: 'Medical App',
-                                subtitle: '9 hours progress',
+                              GestureDetector(
+                                onTap: signout,
+                                child: ActiveProjectsCard(
+                                  cardColor: LightColors.kGreen,
+                                  loadingPercent: 0.25,
+                                  title: 'Medical App',
+                                  subtitle: '9 hours progress',
+                                ),
                               ),
                               SizedBox(width: 20.0),
                               ActiveProjectsCard(

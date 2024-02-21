@@ -4,6 +4,9 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
+
 
 class MapSample extends StatefulWidget {
   const MapSample({super.key});
@@ -21,7 +24,12 @@ class MapSampleState extends State<MapSample> {
       List<LatLng> _points = [];
 
 
-  static const CameraPosition _kGooglePlex = CameraPosition(
+  
+
+
+  static const CameraPosition _kGooglePlex = 
+
+  CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
     zoom: 10,
   );
@@ -44,7 +52,7 @@ class MapSampleState extends State<MapSample> {
     strokeColor: Colors.red,
     strokeWidth: 2,
     center: LatLng(37.43296265331129, -122.08832357078792),
-    fillColor: Colors.redAccent.withOpacity(0.1)
+    fillColor: Colors.redAccent.withOpacity(0.0)
   );
 
   static final Polyline _polyline = Polyline(polylineId: PolylineId('polyline 1'),
@@ -66,24 +74,146 @@ width: 5
   strokeWidth: 2,
   );
 
+  void _addmarker (LatLng markerpoints) {
+ setState(() {
+
+              
+              _manyMarker.add(Marker(markerId: MarkerId('Marker ${_manyMarker.length}'),
+        position:  LatLng(markerpoints.latitude,markerpoints.longitude),
+        infoWindow: InfoWindow(title: 'GOOGLE PLEX ${_manyMarker.length}',snippet: 'Latitude is ${markerpoints.latitude}, longitude iS ${markerpoints.longitude} '),
+        draggable: true
+              ));
+ });
+
+  }
+
+  Future<Position> getCurrentPosition() async{
+
+
+ bool serviceEnabled;
+  LocationPermission permission;
+
+  // Test if location services are enabled.
+  serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  if (!serviceEnabled) {
+    // Location services are not enabled don't continue
+    // accessing the position and request users of the 
+    // App to enable the location services.
+    return Future.error('Location services are disabled.');
+  }
+
+  permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      // Permissions are denied, next time you could try
+      // requesting permissions again (this is also where
+      // Android's shouldShowRequestPermissionRationale 
+      // returned true. According to Android guidelines
+      // your App should show an explanatory UI now.
+      return Future.error('Location permissions are denied');
+    }
+  }
+  
+  if (permission == LocationPermission.deniedForever) {
+    // Permissions are denied forever, handle appropriately. 
+    return Future.error(
+      'Location permissions are permanently denied, we cannot request permissions.');
+  } 
+
+  // When we reach here, permissions are granted and we can
+  // continue accessing the position of the device.
+  return await Geolocator.getCurrentPosition();
+
+
+
+ }
+Future<void> _goCurrentPosition(double statLat,double statlng) async{
+
+  final GoogleMapController controller = await _controller.future;
+  controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+    zoom: 15,
+    target: LatLng(statLat,statlng))));
+  _addmarker(LatLng( statLat, statlng));
+}
+
+Future<LatLng> _goCurrentPosition1() async {
+   Position currentPosition = await getCurrentPosition();
+    try {
+      Position currentPosition = await getCurrentPosition();
+      final GoogleMapController controller = await _controller.future;
+      controller.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            zoom: 15,
+            target: LatLng(currentPosition.latitude, currentPosition.longitude),
+          ),
+        ),
+      );
+      _addmarker(LatLng(currentPosition.latitude, currentPosition.longitude));
+     // _points.add(LatLng(currentPosition.latitude, currentPosition.longitude));
+    } catch (e) {
+      print('Error getting current position: $e');
+    }
+    
+    return  LatLng(currentPosition.latitude, currentPosition.longitude);
+}
+
+ @override
+  void initState() {
+    super.initState();
+  
+  _goCurrentPosition1();
+  _getCurrentLocation();
+   
+  }
+   
+  void _getCurrentLocation() async {
+  try {
+    Position currentPosition = await getCurrentPosition();
+    setState(() {
+      _goCurrentPosition(currentPosition.latitude, currentPosition.longitude);
+      _points.add(LatLng(currentPosition.latitude, currentPosition.longitude));
+    });
+  } catch (e) {
+    print('Error getting current location: $e');
+  }
+}
   @override
   Widget build(BuildContext context) {
-    print(_manyMarker);
+    
+    // _goCurrentPosition1();
+  print(_points);
+bool na;
+  if(_points.isNotEmpty)
+  {
+    na = true;
+  }else{
+    na= false;
+  }
 
    Polyline manypolyline = Polyline(polylineId: PolylineId('polyline 1'),
-    points:_points,
-color:Colors.red,
+    points: _points,
+  color:Colors.red,
 width: 5
   );
-  Polygon _manypolygon = Polygon(polygonId: PolygonId('Polygon1'),
+  Polygon manypolygon = Polygon(polygonId: PolygonId('Polygon ${_points.length}'),
   points:_points,
+  fillColor: Colors.transparent,
+  strokeColor: Colors.red,
+  strokeWidth: 2,
+  );
+
+
+  Polygon manynotpolygon = Polygon(polygonId: PolygonId('Polygon ${_points.length}'),
+  points:[LatLng(37.4219985, -122.0839999)],
   fillColor: Colors.transparent,
   strokeColor: Colors.red,
   strokeWidth: 2,
   );
     return Scaffold(
       body: GoogleMap(
-       // polygons: {_manypolygon},
+     polygons: na ?{manypolygon} :{manynotpolygon} ,
        // polylines: {manypolyline},
         circles: Set<Circle>.from(_manyCircle),
         markers: Set<Marker>.from(_manyMarker),
@@ -115,11 +245,14 @@ width: 5
           
         },
       ),
-      // floatingActionButton: FloatingActionButton.extended(
-      //   onPressed: _goToTheLake,
-      //   label: const Text('To the lake!'),
-      //   icon: const Icon(Icons.directions_boat),
-      // ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () async {
+           Position CurrentPosition = await getCurrentPosition();
+           _goCurrentPosition(CurrentPosition.latitude, CurrentPosition.longitude);
+        },
+        label: const Text('To the lake!'),
+        icon: const Icon(Icons.directions_boat),
+      ),
     );
   }
 
